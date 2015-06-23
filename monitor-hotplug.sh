@@ -1,17 +1,16 @@
 #!/bin/bash
 #initially created by codingtony (https://github.com/codingtony/udev-monitor-hotplug)
-
 #Adapt this script to your needs.
-DEVICES=$(find /sys/class/drm/*/status)
 
-#inspired by /etc/acpd/lid.sh and the function it sources
+DEVICES=$(find /sys/class/drm/*/status)
 
 # debug=/home/moiri/monitor.log
 displaynum=`ls /tmp/.X11-unix/* | sed s#/tmp/.X11-unix/X##`
 display=":$displaynum"
 export DISPLAY=":$displaynum"
 
-xuid=$(xhost | sed s#SI:localuser:## | tail -1)
+# xuid=$(xhost | sed s#SI:localuser:## | tail -1)
+xuid=$(ps -o uname,comm -A | grep lxpanel | grep -Eo '^[^ ]+')
 uid=$(whoami)
 if [ "$uid" == "root" ]; then
 	# from https://wiki.archlinux.org/index.php/Acpid#Laptop_Monitor_Power_Off
