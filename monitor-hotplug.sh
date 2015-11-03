@@ -41,36 +41,42 @@ do
   fi
 done <<< "$DEVICES"
 
-
-if [ ! -z "$HDMI1" -a ! -z "$VGA1" ]
-then
-  echo "HDMI1 and VGA1 are plugged in"
-  xrandr --output eDP1 --off
-  xrandr --output VGA1 --mode 1920x1080 --noprimary
-  xrandr --output HDMI1 --mode 1920x1200 --right-of VGA1 --primary
-elif [ ! -z "$HDMI1" -a -z "$VGA1" ]; then
-  echo "HDMI1 is plugged in, but not VGA1"
-  xrandr --output eDP1 --off
-  xrandr --output VGA1 --off
-  xrandr --output HDMI1 --mode 1920x1200 --primary
-  # set lxpanel position
-  sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-  lxpanelctl restart
-elif [ -z "$HDMI1" -a ! -z "$VGA1" ]; then
-  echo "VGA1 is plugged in, but not HDMI1"
-  xrandr --output eDP1 --mode 1920x1080 --noprimary
-  xrandr --output HDMI1 --off
-  xrandr --output VGA1 --mode 1920x1080 --right-of eDP1 --primary
-  # set lxpanel position
-  sed -i 's/monitor=0/monitor=1/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-  lxpanelctl restart
+if [ ! -z "$DVII1" -a ! -z "$HDMI1" -a -z "$VGA1" ]; then
+    # I am at home
+    echo "DVII1 (dock) and HDMI1 are plugged in, but not VGA1"
+    xrandr --output HDMI1 --mode 1920x1200 --primary \
+        --output VGA1 --off \
+        --output eDP1 --off
+    # only one of those will run, the other will be ignored
+    xrandr --output DVI-1-0 --mode 1024x768 --noprimary # dock without screen (only sound)
+    xrandr --output DVII1 --mode 1920x1200 --noprimary # doch with screen
+    # set lxpanel position
+    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+    lxpanelctl restart
+elif [ -z "$DVII1" -a -z "$HDMI1" -a ! -z "$VGA1" ]; then
+    # I am at UH
+    echo "VGA1 is plugged in, but not DVII1 (dock) and HDMI1"
+    xrandr --output HDMI1 --off \
+        --output eDP1 --mode 1920x1080 --noprimary \
+        --output VGA1 --mode 1920x1080 --right-of eDP1 --primary
+    # set lxpanel position
+    sed -i 's/monitor=0/monitor=1/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+    lxpanelctl restart
+elif [ -z "$DVI-0-1" -a -z "$DVII1" -a -z "$HDMI1" -a -z "$VGA1" ]; then
+    # I use the notebook without anything connected
+    echo "No external monitors are plugged in"
+    xrandr --output HDMI1 --off \
+        --output VGA1 --off \
+        --output eDP1 --mode 1920x1080 --primary
+    # set lxpanel position
+    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+    lxpanelctl restart
 else
-  echo "No external monitors are plugged in"
-  xrandr --output VGA1 --off
-  xrandr --output HDMI1 --off
-  xrandr --output eDP1 --mode 1920x1080 --primary
-  # set lxpanel position
-  sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-  lxpanelctl restart
+    # I did not think of this configuration -> just run the internal screen
+    xrandr --output HDMI1 --off \
+        --output VGA1 --off \
+        --output eDP1 --mode 1920x1080 --primary
+    # set lxpanel position
+    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+    lxpanelctl restart
 fi
-
