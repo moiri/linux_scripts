@@ -53,6 +53,15 @@ if [ ! -z "$DVII1" -a ! -z "$HDMI1" -a -z "$VGA1" ]; then
     # set lxpanel position
     sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
     lxpanelctl restart
+elif [ ! -z "$HDMI1" -a -z "$VGA1" ]; then
+    # I am at home
+    echo "DVII1 (dock) and HDMI1 are plugged in, but not VGA1"
+    xrandr --output HDMI1 --mode 1920x1200 --primary \
+        --output VGA1 --off \
+        --output eDP1 --off
+    # set lxpanel position
+    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+    lxpanelctl restart
 elif [ -z "$DVII1" -a -z "$HDMI1" -a ! -z "$VGA1" ]; then
     # I am at UH
     echo "VGA1 is plugged in, but not DVII1 (dock) and HDMI1"
