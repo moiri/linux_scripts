@@ -8,4 +8,4 @@ mpd 2>> $log
 gvfs-mount smb://fritz.nas/rahja/Samsung-M3Portable-01/music </home/moiri/.config/mpd/nas.cred
 
 # run scrobbler for last.fm
-mpdscribble
+# mpdscribble
