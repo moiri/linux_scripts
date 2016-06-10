@@ -1,1 +1,1 @@
-# linux_scripts
+A bunch of scripts to do useful stuff on linux
