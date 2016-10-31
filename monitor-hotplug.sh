@@ -51,8 +51,8 @@ if [ ! -z "$DVII1" -a ! -z "$HDMI1" -a -z "$VGA1" ]; then
     xrandr --output DVI-1-0 --mode 1024x768 --noprimary # dock without screen (only sound)
     xrandr --output DVII1 --mode 1920x1200 --noprimary # doch with screen
     # set lxpanel position
-    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-    lxpanelctl restart
+    MONITOR_SRC=1;
+    MONITOR_DST=0;
 elif [ ! -z "$HDMI1" -a -z "$VGA1" ]; then
     # I am at home
     echo "DVII1 (dock) and HDMI1 are plugged in, but not VGA1"
@@ -60,8 +60,8 @@ elif [ ! -z "$HDMI1" -a -z "$VGA1" ]; then
         --output VGA1 --off \
         --output eDP1 --off
     # set lxpanel position
-    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-    lxpanelctl restart
+    MONITOR_SRC=1;
+    MONITOR_DST=0;
 elif [ -z "$DVII1" -a -z "$HDMI1" -a ! -z "$VGA1" ]; then
     # I am at UH
     echo "VGA1 is plugged in, but not DVII1 (dock) and HDMI1"
@@ -69,8 +69,9 @@ elif [ -z "$DVII1" -a -z "$HDMI1" -a ! -z "$VGA1" ]; then
         --output eDP1 --mode 1920x1080 --noprimary \
         --output VGA1 --mode 1920x1080 --right-of eDP1 --primary
     # set lxpanel position
+    MONITOR_SRC=0;
+    MONITOR_DST=1;
     sed -i 's/monitor=0/monitor=1/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-    lxpanelctl restart
 elif [ -z "$DVI-0-1" -a -z "$DVII1" -a -z "$HDMI1" -a -z "$VGA1" ]; then
     # I use the notebook without anything connected
     echo "No external monitors are plugged in"
@@ -78,14 +79,16 @@ elif [ -z "$DVI-0-1" -a -z "$DVII1" -a -z "$HDMI1" -a -z "$VGA1" ]; then
         --output VGA1 --off \
         --output eDP1 --mode 1920x1080 --primary
     # set lxpanel position
-    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-    lxpanelctl restart
+    MONITOR_SRC=1;
+    MONITOR_DST=0;
 else
     # I did not think of this configuration -> just run the internal screen
     xrandr --output HDMI1 --off \
         --output VGA1 --off \
         --output eDP1 --mode 1920x1080 --primary
     # set lxpanel position
-    sed -i 's/monitor=1/monitor=0/g' /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
-    lxpanelctl restart
+    MONITOR_SRC=1;
+    MONITOR_DST=0;
 fi
+sed -i "s/monitor=$MONITOR_SRC/monitor=$MONITOR_DST/g" /home/$xuid/.config/lxpanel/Lubuntu/panels/panel
+lxpanelctl restart
